@@ -1,0 +1,48 @@
+#include<ESP8266WiFi.h>
+#include <FirebaseArduino.h>
+
+#define LDR_Pin A0
+int Light_Intensity = 0;
+
+#define FIREBASE_HOST "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+#define FIREBASE_AUTH "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+#define WIFI_SSID "xxxxxxxxxx"
+#define WIFI_PASSWORD "xxxxxxxxx"
+
+void setup(){
+Serial.begin(9600);
+
+WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  Serial.print("connecting");
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    delay(500);
+  }
+  Serial.println();
+  Serial.print("connected: ");
+  Serial.println(WiFi.localIP());
+  
+  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
+
+}
+
+void loop(){
+Light_Intensity = analogRead(LDR_Pin);
+Serial.print("Light Intensity: ");
+Serial.print(Light_Intensity);
+Serial.println("Lux");
+
+ Firebase.setFloat("Light_Intensity",Light_Intensity );
+ s=Firebase.getString("state").toInt();
+// Serial.println(s);
+  if(s==1){
+    digitalWrite(led,HIGH);
+  }
+  if(s==0){
+    digitalWrite(led,LOW);
+  }
+ 
+}
+
+
+
